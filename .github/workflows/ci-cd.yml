@@ -55,11 +55,26 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/car-showroom-app:latest
+            docker network create carshowroom-network || true
+
+            docker stop car-showroom-db || true
+            docker rm car-showroom-db || true
+            docker run -d --name car-showroom-db \
+              --network carshowroom-network \
+              -e MYSQL_ROOT_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e MYSQL_DATABASE=showroom_2 \
+              mysql:8
+
+            echo "Waiting for MySQL to start..."
+            sleep 20
+
             docker stop car-showroom || true
             docker rm car-showroom || true
-            docker run -d --name car-showroom -p 8080:8080 \
-              -e SPRING_DATASOURCE_URL=jdbc:mysql://<YOUR_DB_HOST>:3306/carshowroom \
+            docker pull ${{ secrets.DOCKER_USERNAME }}/car-showroom-app:latest
+            docker run -d --name car-showroom \
+              --network carshowroom-network \
+              -p 8080:8080 \
+              -e SPRING_DATASOURCE_URL=jdbc:mysql://car-showroom-db:3306/showroom_2 \
               -e SPRING_DATASOURCE_USERNAME=root \
-              -e SPRING_DATASOURCE_PASSWORD=root \
+              -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
               ${{ secrets.DOCKER_USERNAME }}/car-showroom-app:latest
