@@ -1,6 +1,5 @@
 package com.carshowroom.mycar_showroom.config;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -35,19 +34,18 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(request -> {
                 CorsConfiguration config = new CorsConfiguration();
-config.setAllowedOriginPatterns(Arrays.asList("http://localhost:8080", "http://127.0.0.1:8080"));
+                config.setAllowedOriginPatterns(List.of("*"));
                 config.setAllowedMethods(List.of("*"));
                 config.setAllowedHeaders(List.of("*"));
                 config.setAllowCredentials(true);
                 return config;
             }))
-.authorizeHttpRequests(auth -> auth
+            .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**", "/", "/index.html", "/login**", "/register**",
                         "/cars**", "/rent**", "/search**", "/purchase**", "/car-details**",
                         "/dashboard**", "/css/**", "/js/**", "/assets/**",
                         "/api/cars/**", "/api/options/**").permitAll()
-                // Companies & Colors: GET is public, POST/DELETE require auth
                 .requestMatchers(HttpMethod.GET, "/api/companies/**", "/api/colors/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/companies/**", "/api/colors/**").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/companies/**", "/api/colors/**").authenticated()
