@@ -1,5 +1,5 @@
 // Base URL for backend APIs (Assuming Spring Boot)
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = window.location.origin + '/api';
 
 /**
  * Common Header Component 
