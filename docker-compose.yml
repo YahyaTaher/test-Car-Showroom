@@ -1,7 +1,7 @@
 services:
   db:
     image: mysql:8.0
-    container_name: car-showroom-db
+    container_name: showroom-db
     restart: always
     environment:
       MYSQL_DATABASE: showroom_2
@@ -12,7 +12,7 @@ services:
       - mysql_data:/var/lib/mysql
 
   app:
-  image: yahyataher/car-showroom-app:latest
+  build: .
   container_name: car-showroom
   restart: always
   depends_on:
