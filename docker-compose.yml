@@ -13,7 +13,7 @@ services:
 
   app:
     build: .
-    container_name: car-showroom-app
+    container_name: car-showroom
     restart: always
     depends_on:
       - db
